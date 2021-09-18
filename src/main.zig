@@ -1,14 +1,18 @@
 const std = @import("std");
 const window = @import("window.zig");
-const c = @import("c.zig");
+const shader = @import("shader.zig");
+const gl = @import("gl.zig");
 
 pub fn main() anyerror!void {
     const win = try window.Window.init(640, 480, "harvest - float");
     defer win.close();
 
-    // loop forever
+    const vert_src = @embedFile("../shaders/vertex.glsl");
+    const frag_src = @embedFile("../shaders/frag.glsl");
+    _ = try shader.Shader.init(vert_src, frag_src);
+
     while (!win.shouldClose()) {
-        c.glClear(c.GL_COLOR_BUFFER_BIT);
+        gl.clear();
         win.tick();
     }
 }
