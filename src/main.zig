@@ -14,11 +14,12 @@ pub fn main() anyerror!void {
     sh.use();
 
     const vertices = [_]f32{
-        -0.5, -0.5, 0.0,
-        0.5,  -0.5, 0.0,
-        0.0,  0.5,  0.0,
+        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
+        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0,
+        0.0,  0.5,  0.0, 0.0, 0.0, 1.0,
     };
 
+    const color_offset = @intCast(c_int, 0);
     var vao: u32 = 0;
     c.glGenVertexArrays(1, &vao);
     c.glBindVertexArray(vao);
@@ -27,7 +28,8 @@ pub fn main() anyerror!void {
     c.glGenBuffers(1, &vbo);
     c.glBindBuffer(c.GL_ARRAY_BUFFER, vbo);
     c.glBufferData(c.GL_ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, c.GL_STATIC_DRAW);
-    c.glVertexAttribPointer(0, 3, c.GL_FLOAT, c.GL_FALSE, 3 * @sizeOf(f32), null);
+    c.glVertexAttribPointer(0, 3, c.GL_FLOAT, c.GL_FALSE, 2 * 3 * @sizeOf(f32), null);
+    c.glVertexAttribPointer(1, 3, c.GL_FLOAT, c.GL_FALSE, 2 * 3 * @sizeOf(f32), &color_offset);
     c.glEnableVertexAttribArray(0);
 
     while (!win.shouldClose()) {
