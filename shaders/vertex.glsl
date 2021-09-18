@@ -7,6 +7,5 @@ out vec3 out_color;
 
 void main() {
 	gl_Position = vec4(in_pos, 1.0);
-	out_color = vec3(in_color.x, 1.0, in_color.y);
-	// out_color = vec3(1.0, 0.0, 0.0);
+	out_color = in_color;
 }
