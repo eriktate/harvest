@@ -1,0 +1,157 @@
+{
+  "main": {
+    "id": "87ba69cb0aae3eb2",
+    "type": "split",
+    "children": [
+      {
+        "id": "63850cac15d5dd5a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4254b53b61a6a357",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/braindump.excalidraw.md"
+              }
+            }
+          },
+          {
+            "id": "b37b08558da8cbb3",
+            "type": "leaf",
+            "state": {
+              "type": "excalidraw",
+              "state": {
+                "file": "Excalidraw/engine_braindump.excalidraw.md"
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "62e80a46d51d54c6",
+    "type": "split",
+    "children": [
+      {
+        "id": "a223919ca3600313",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "92ed7044e8dab156",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "e00d3c66e08e56a2",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "5cbffcd478d64b7c",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5e971ad05667cf70",
+    "type": "split",
+    "children": [
+      {
+        "id": "69422b8a2ea186b9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ac230069d5924dfe",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "6a1bef642488aefc",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "711e21efce09d417",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "3722559fd04fe83e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Excalidraw/engine_braindump.excalidraw.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "b37b08558da8cbb3",
+  "lastOpenFiles": [
+    "Excalidraw/engine_braindump.excalidraw.md",
+    "Excalidraw/braindump.excalidraw.md",
+    "Untitled.md",
+    "Untitled 1.md",
+    "Excalidraw.md",
+    "Brainstorm.md"
+  ]
+}
