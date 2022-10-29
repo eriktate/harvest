@@ -1,40 +1,70 @@
 const std = @import("std");
-const window = @import("window.zig");
-const shader = @import("shader.zig");
 const gl = @import("gl.zig");
-const c = @import("c.zig");
+const Window = @import("window.zig");
+const Shader = @import("shader.zig");
+const render = @import("render.zig");
+const math = @import("math.zig");
 
 pub fn main() anyerror!void {
-    const win = try window.Window.init(640, 480, "harvest - float");
+    std.debug.print("Starting harvest...", .{});
+
+    var win = try Window.init(640, 360, "harvest - float");
     defer win.close();
 
-    const vert_src = @embedFile("../shaders/vertex.glsl");
-    const frag_src = @embedFile("../shaders/frag.glsl");
-    const sh = try shader.Shader.init(vert_src, frag_src);
-    sh.use();
+    const vs_src = @embedFile("./shaders/vs.glsl");
+    const fs_src = @embedFile("./shaders/fs.glsl");
+    const shader = try Shader.init(vs_src, fs_src);
 
-    const vertices = [_]f32{
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0,
-        0.5,  -0.5, 0.0, 0.0, 1.0, 0.0,
-        0.0,  0.5,  0.0, 0.0, 0.0, 1.0,
-    };
+    var quads = [_]render.Quad{render.Quad{
+        .tl = render.Vertex{
+            .pos = math.Vec3(f32).init(-0.5, 0.5, 0.0),
+            .tex_pos = math.Vec2(u16).zero(),
+        },
+        .tr = render.Vertex{
+            .pos = math.Vec3(f32).init(0.5, 0.5, 0.0),
+            .tex_pos = math.Vec2(u16).zero(),
+        },
+        .bl = render.Vertex{
+            .pos = math.Vec3(f32).init(-0.5, -0.5, 0.0),
+            .tex_pos = math.Vec2(u16).zero(),
+        },
+        .br = render.Vertex{
+            .pos = math.Vec3(f32).init(0.5, -0.5, 0.0),
+            .tex_pos = math.Vec2(u16).zero(),
+        },
+    }};
 
-    var vao: u32 = 0;
-    c.glGenVertexArrays(1, &vao);
-    c.glBindVertexArray(vao);
+    var indices = [6]u32{ 0, 0, 0, 0, 0, 0 };
+    render.makeIndices(&quads, &indices);
 
-    var vbo: u32 = 0;
-    c.glGenBuffers(1, &vbo);
-    c.glBindBuffer(c.GL_ARRAY_BUFFER, vbo);
-    c.glBufferData(c.GL_ARRAY_BUFFER, @sizeOf(f32) * vertices.len, &vertices, c.GL_STATIC_DRAW);
-    gl.vertexAttribPointer(0, 3, 2 * 3 * @sizeOf(f32), 0);
-    gl.vertexAttribPointer(1, 3, 2 * 3 * @sizeOf(f32), 3 * @sizeOf(f32));
+    var vao = gl.genVAO();
+    gl.bindVAO(vao);
 
+    var vbo = gl.genBuffer();
+    gl.bindBuffer(gl.BufferTarget.Array, vbo);
+    gl.bufferData(render.Quad, gl.BufferTarget.Array, &quads, gl.BufferUsage.DynamicDraw);
+    // vertex pos
+    gl.vertexAttribPointer(0, 3, gl.DataType.Float, false, @sizeOf(render.Vertex), null);
+    // vertex tex pos
+    gl.vertexAttribPointer(1, 2, gl.DataType.Uint, false, @sizeOf(render.Vertex), @sizeOf(math.Vec3(f32)));
+
+    var ebo = gl.genBuffer();
+    gl.bindBuffer(gl.BufferTarget.Element, ebo);
+    gl.bufferData(u32, gl.BufferTarget.Element, &indices, gl.BufferUsage.DynamicDraw);
+    gl.bindVAO(0);
+    gl.bindBuffer(gl.BufferTarget.Array, 0);
+    gl.bindBuffer(gl.BufferTarget.Element, 0);
+
+    gl.enable(gl.Capability.Blend);
+    gl.blendFunc(gl.SFactor.SrcAlpha, gl.DFactor.OneMinusSrcAlpha);
+
+    shader.use();
     while (!win.shouldClose()) {
-        gl.clear();
-        c.glBindVertexArray(vao);
-        c.glDrawArrays(c.GL_TRIANGLES, 0, 3);
-        c.glBindVertexArray(0);
-        win.tick();
+        gl.bindVAO(vao);
+        gl.clearColor(100.0 / 255.0, 149.0 / 255.0, 237.0 / 255.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawElements(gl.DrawMode.Triangles, indices.len);
+        win.swap();
+        gl.bindVAO(0);
     }
 }
