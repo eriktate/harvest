@@ -25,6 +25,9 @@ pub fn build(b: *std.build.Builder) void {
     exe.addIncludePath(stb_path);
     exe.addIncludePath(miniaudio_path);
 
+    // exe.addCSourceFile("./include/miniaudio_impl.c", &[_][]const u8{"-Werror"});
+    exe.addCSourceFile("./include/stb_image_impl.c", &[_][]const u8{"-Werror"});
+
     exe.addIncludePath(glfw_path ++ "include");
     exe.addLibraryPath(glfw_path ++ "_build/src");
 

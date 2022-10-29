@@ -11,9 +11,23 @@
             "id": "4254b53b61a6a357",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "Excalidraw/braindump.excalidraw.md"
+                "file": "Brainstorm.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "3f178999a8cb75dc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "MVP.md",
+                "mode": "source",
+                "source": false
               }
             }
           },
@@ -94,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "file": "MVP.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +125,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "file": "MVP.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +148,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md"
+                "file": "MVP.md"
               }
             }
           }
@@ -145,13 +159,13 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "b37b08558da8cbb3",
+  "active": "3f178999a8cb75dc",
   "lastOpenFiles": [
-    "Excalidraw/engine_braindump.excalidraw.md",
+    "Brainstorm.md",
     "Excalidraw/braindump.excalidraw.md",
-    "Untitled.md",
+    "Excalidraw/engine_braindump.excalidraw.md",
+    "MVP.md",
     "Untitled 1.md",
-    "Excalidraw.md",
-    "Brainstorm.md"
+    "Excalidraw.md"
   ]
 }

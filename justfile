@@ -16,3 +16,6 @@ clean-deps:
 	rm -rf vendor/glfw/_build
 
 install-deps: clean-deps pull-deps build-deps
+
+run:
+	zig build run

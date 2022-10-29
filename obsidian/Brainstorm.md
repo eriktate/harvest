@@ -1,6 +1,6 @@
 # Harvest
 ## Concept
-A post-apocalyptic fantasy world where the only land left to support crops is fraught with danger and crawling with monsters. Only the best, bravest, and strongest are chosen to be farmers, tasked with growing as much food as possible while fighting off droves of monsters and fiends.
+A post-apocalyptic fantasy world where the only land left to support crops is fraught with danger and crawling with monsters. Only the best, bravest, and strongest are chosen to be harvesters, tasked with growing as much food as possible while fighting off droves of monsters
 
 ## Aesthetic
 Dark, moody colors (Below, Darkest Dungeon, Isaac). Maybe post-apocalyptic medieval/fantasy? Goal of the game is to produce as much food as possible each day. You get a report from the city you support each day letting you know how many people died of starvation (think Papers Please).
