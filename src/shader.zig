@@ -1,9 +1,6 @@
 const std = @import("std");
 const gl = @import("gl.zig");
 
-const fs = std.fs;
-const print = std.debug.print;
-
 const ShaderError = error{
     VertexCompilation,
     FragmentCompilation,
@@ -14,7 +11,7 @@ const Shader = @This();
 id: u32,
 
 fn logError(log: []u8) void {
-    print("Shader Log: {s}", .{log});
+    std.debug.print("Shader Log: {s}", .{log});
 }
 
 pub fn init(vert_src: []const u8, frag_src: []const u8) ShaderError!Shader {
@@ -22,7 +19,6 @@ pub fn init(vert_src: []const u8, frag_src: []const u8) ShaderError!Shader {
     errdefer logError(&log);
 
     var vert = gl.createShader(gl.ShaderType.Vertex);
-    print("vertex id: {d}", .{vert});
     gl.shaderSource(vert, vert_src);
     gl.compileShader(vert, &log) catch return ShaderError.VertexCompilation;
 
@@ -46,6 +42,8 @@ pub fn use(self: Shader) void {
     gl.useProgram(self.id);
 }
 
+// TODO (etate): could probably use comptime to make a setUniform() function that uses the right gl calls
+// for the type specified
 pub fn setInt(self: Shader, name: [*]const u8, val: i32) void {
     self.use();
     gl.uniformInt(self.id, name, val);
