@@ -49,7 +49,7 @@ pub fn setInt(self: Shader, name: [*]const u8, val: i32) void {
     gl.uniformInt(self.id, name, val);
 }
 
-pub fn setUint(self: Shader, name: [*]const u8, val: i32) void {
+pub fn setUint(self: Shader, name: [*]const u8, val: u32) void {
     self.use();
     gl.uniformUint(self.id, name, val);
 }

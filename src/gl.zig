@@ -30,6 +30,7 @@ pub const BufferUsage = enum(c_uint) {
 pub const DataType = enum(c_uint) {
     Float = c.GL_FLOAT,
     Uint = c.GL_UNSIGNED_INT,
+    Ushort = c.GL_UNSIGNED_SHORT,
 };
 
 pub const Capability = enum(c_uint) {
@@ -83,7 +84,7 @@ pub fn bindBuffer(target: BufferTarget, handle: Handle) void {
     c.glBindBuffer(@enumToInt(target), handle);
 }
 
-pub fn bufferData(comptime T: type, target: BufferTarget, data: []T, usage: BufferUsage) void {
+pub fn bufferData(comptime T: type, target: BufferTarget, data: []const T, usage: BufferUsage) void {
     c.glBufferData(@enumToInt(target), @intCast(c_long, @sizeOf(T) * data.len), data.ptr, @enumToInt(usage));
 }
 
@@ -176,6 +177,46 @@ pub fn uniformUint(program: Handle, name: [*]const u8, val: u32) void {
     c.glUniform1ui(c.glGetUniformLocation(program, name), val);
 }
 
-pub fn drawElements(mode: DrawMode, count: u32) void {
+pub fn drawElements(mode: DrawMode, count: usize) void {
     c.glDrawElements(@enumToInt(mode), @intCast(c_int, count), c.GL_UNSIGNED_INT, null);
+}
+
+pub fn genTexture() Handle {
+    var tex_id: Handle = 0;
+    c.glGenTextures(1, &tex_id);
+    return tex_id;
+}
+
+pub const TexTarget = enum(c_uint) {
+    Texture2D = c.GL_TEXTURE_2D,
+};
+
+pub fn bindTexture(target: TexTarget, tex_id: Handle) void {
+    c.glBindTexture(@enumToInt(target), tex_id);
+}
+
+pub fn texImage2D(target: TexTarget, width: i32, height: i32, data: [*c]u8) void {
+    c.glTexImage2D(@enumToInt(target), 0, c.GL_RGBA, @intCast(c_int, width), @intCast(c_int, height), 0, c.GL_RGBA, c.GL_UNSIGNED_BYTE, data);
+}
+
+pub const TexFilter = enum(c_uint) {
+    MagFilter = c.GL_TEXTURE_MAG_FILTER,
+    MinFilter = c.GL_TEXTURE_MIN_FILTER,
+};
+
+pub const FilterParam = enum(c_int) {
+    Nearest = c.GL_NEAREST,
+    Linear = c.GL_LINEAR,
+    NearestMipmapNearest = c.GL_NEAREST_MIPMAP_NEAREST,
+    LinearMipmapNearest = c.GL_LINEAR_MIPMAP_NEAREST,
+    NearestMipmapLinear = c.GL_NEAREST_MIPMAP_LINEAR,
+    LinearMipmapLinear = c.GL_LINEAR_MIPMAP_LINEAR,
+};
+
+pub fn texFilter(target: TexTarget, filter: TexFilter, param: FilterParam) void {
+    c.glTexParameteri(@enumToInt(target), @enumToInt(filter), @enumToInt(param));
+}
+
+pub fn generateMipmap(target: TexTarget) void {
+    c.glGenerateMipmap(@enumToInt(target));
 }
