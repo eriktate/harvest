@@ -15,8 +15,8 @@ vbo: u32,
 ebo: u32,
 
 pub fn init(world_width: u32, world_height: u32, quads: []const render.Quad, indices: []u32) !QuadRenderer {
-    const vert_src = @embedFile("./shaders/sprite.vert");
-    const frag_src = @embedFile("./shaders/sprite.frag");
+    const vert_src = @embedFile("../shaders/sprite.vert");
+    const frag_src = @embedFile("../shaders/sprite.frag");
 
     const shader = try Shader.init(vert_src, frag_src);
     shader.setUint("world_width", world_width);
