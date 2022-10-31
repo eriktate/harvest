@@ -20,6 +20,8 @@ pub fn build(b: *std.build.Builder) void {
     exe.setTarget(target);
     exe.setBuildMode(mode);
 
+    exe.setMainPkgPath("./");
+
     // include/ contains any custom C files required to interact with vendors
     exe.addIncludePath("./include");
     exe.addIncludePath(stb_path);

@@ -6,6 +6,13 @@ const math = @import("math.zig");
 pub const Vertex = extern struct {
     pos: math.Vec3(f32),
     tex_pos: math.Vec2(u16),
+
+    pub fn zero() Vertex {
+        return Vertex{
+            .pos = math.Vec3(f32).zero(),
+            .tex_pos = math.Vec2(u16).zero(),
+        };
+    }
 };
 
 pub const Quad = extern struct {
@@ -13,17 +20,26 @@ pub const Quad = extern struct {
     tr: Vertex,
     bl: Vertex,
     br: Vertex,
+
+    pub fn zero() Quad {
+        return Quad{
+            .tl = Vertex.zero(),
+            .tr = Vertex.zero(),
+            .bl = Vertex.zero(),
+            .br = Vertex.zero(),
+        };
+    }
 };
 
-pub fn makeIndices(quads: []const Quad, indices: [*]u32) void {
+pub fn makeIndices(quads: []const Quad, indices: []u32) void {
     for (quads) |_, i| {
         const idx = @intCast(u32, i);
-        indices[6 * idx] = 4 * idx;
-        indices[6 * idx + 1] = 4 * idx + 1;
-        indices[6 * idx + 2] = 4 * idx + 2;
-        indices[6 * idx + 3] = 4 * idx + 2;
-        indices[6 * idx + 4] = 4 * idx + 3;
-        indices[6 * idx + 5] = 4 * idx + 1;
+        indices[6 * i] = 4 * idx;
+        indices[6 * i + 1] = 4 * idx + 1;
+        indices[6 * i + 2] = 4 * idx + 2;
+        indices[6 * i + 3] = 4 * idx + 2;
+        indices[6 * i + 4] = 4 * idx + 3;
+        indices[6 * i + 5] = 4 * idx + 1;
     }
 }
 

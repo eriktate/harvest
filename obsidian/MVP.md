@@ -1,11 +1,15 @@
 # Engine
-- [] Rendering quads to the screen
+- [x] Rendering quads to the screen
 - [] Basic entity management
+- [] Debug renderer
+- [] Player controller/movement
 - [] Walls
-- [] Player movement
 - [] Player collision
+- [] Camera
 - [] Loading texture atlases
 - [] Animations
+- [] Static tile renderer (_slightly_ different from sprite renderer, and should happen first)
+- [] Bitmap font renderer (quad renderer extension?)
 - [] Playing sounds
 - [] Playing music
 - [] Day night cycle
