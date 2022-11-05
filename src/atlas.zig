@@ -56,13 +56,11 @@ pub fn getFrame(self: Atlas, row: u16, col: u16) !Frame {
 }
 
 pub fn index(self: Atlas, idx: u16) !Frame {
-    if (idx == 0) {
-        return self.getFrame(0, 0);
-    }
+    const max_cols = self.cols();
+    const row = if (idx > max_cols) max_cols / idx else 0;
+    const col = idx % max_cols;
 
-    const row = self.rows() / idx;
-    const col = self.rows() % idx;
-
+    @import("std").debug.print("index: {d}, {d}", .{ row, col });
     return self.getFrame(row, col);
 }
 

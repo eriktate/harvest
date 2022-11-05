@@ -30,7 +30,7 @@ pub fn main() anyerror!void {
     const knight_raw = @embedFile("../assets/sprites/knight.png");
     const tex = try Texture.fromMemory(knight_raw);
     const atlas = Atlas.init(tex.width, tex.height, 16, 16, math.Vec2(u16).init(4, 4), null);
-    const frame = try atlas.getFrame(0, 1);
+    const frame = try atlas.index(0);
     const knight_spr = Sprite.init(math.Vec3(f32).init(180.0, 90.0, 0.0), frame.tl, 16, 16);
     const knight_id = try mgr.addEntity(.{
         .pos = math.Vec3(f32).init(180.0, 90.0, 0.0),
