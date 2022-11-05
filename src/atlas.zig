@@ -4,21 +4,22 @@ pub const AtlasError = error{
     OutOfBounds,
 };
 
-const TexPos = math.Vec2(u32);
+const TexPos = math.Vec2(u16);
+
 pub const Frame = struct {
     tl: TexPos,
     br: TexPos,
 };
 
 const Atlas = @This();
-width: u32,
-height: u32,
-frame_width: u32,
-frame_height: u32,
+width: u16,
+height: u16,
+frame_width: u16,
+frame_height: u16,
 gap: TexPos,
 offset: TexPos,
 
-pub fn init(width: u32, height: u32, frame_width: u32, frame_height: u32, gap: ?TexPos, offset: ?TexPos) Atlas {
+pub fn init(width: u16, height: u16, frame_width: u16, frame_height: u16, gap: ?TexPos, offset: ?TexPos) Atlas {
     return Atlas{
         .width = width,
         .height = height,
@@ -30,15 +31,15 @@ pub fn init(width: u32, height: u32, frame_width: u32, frame_height: u32, gap: ?
 }
 
 // number of rows in Atlas
-fn rows(self: Atlas) u32 {
+fn rows(self: Atlas) u16 {
     return (self.height - self.gap.y) / (self.frame_height + self.gap.y);
 }
 
-fn cols(self: Atlas) u32 {
+fn cols(self: Atlas) u16 {
     return (self.width - self.gap.x) / (self.frame_width + self.gap.x);
 }
 
-pub fn getFrame(self: Atlas, row: u32, col: u32) !Frame {
+pub fn getFrame(self: Atlas, row: u16, col: u16) !Frame {
     if (row >= self.rows() or col >= self.cols()) {
         return AtlasError.OutOfBounds;
     }
@@ -54,7 +55,11 @@ pub fn getFrame(self: Atlas, row: u32, col: u32) !Frame {
     };
 }
 
-pub fn index(self: Atlas, idx: u32) !Frame {
+pub fn index(self: Atlas, idx: u16) !Frame {
+    if (idx == 0) {
+        return self.getFrame(0, 0);
+    }
+
     const row = self.rows() / idx;
     const col = self.rows() % idx;
 
@@ -154,4 +159,15 @@ test "get frame with offset (simulates atlas within larger texture)" {
     assert(lastFrame.br.eq(TexPos.init(224, 224)));
 
     try testing.expectError(AtlasError.OutOfBounds, atlas.getFrame(8, 8));
+}
+
+test "frame dimensions match atlas dimensions" {
+    const std = @import("std");
+    const assert = std.debug.assert;
+
+    const atlas = Atlas.init(16, 16, 16, 16, null, null);
+
+    const frame = try atlas.index(0);
+    assert(frame.tl.eq(TexPos.init(0, 0)));
+    assert(frame.br.eq(TexPos.init(16, 16)));
 }
