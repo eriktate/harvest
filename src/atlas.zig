@@ -10,22 +10,22 @@ pub const Frame = struct {
     br: TexPos,
 };
 
-// TODO (etate): add offset and assume that width and height is relative to offset, which will allow
-// multiple atlases of different sizes to exist in the same texture
 const Atlas = @This();
 width: u32,
 height: u32,
 frame_width: u32,
 frame_height: u32,
 gap: TexPos,
+offset: TexPos,
 
-pub fn init(width: u32, height: u32, frame_width: u32, frame_height: u32, gap: ?TexPos) Atlas {
+pub fn init(width: u32, height: u32, frame_width: u32, frame_height: u32, gap: ?TexPos, offset: ?TexPos) Atlas {
     return Atlas{
         .width = width,
         .height = height,
         .frame_width = frame_width,
         .frame_height = frame_height,
         .gap = gap orelse TexPos.zero(),
+        .offset = offset orelse TexPos.zero(),
     };
 }
 
@@ -46,7 +46,7 @@ pub fn getFrame(self: Atlas, row: u32, col: u32) !Frame {
     const tl = TexPos.init(
         col * (self.frame_width + self.gap.x) + self.gap.x,
         row * (self.frame_height + self.gap.y) + self.gap.y,
-    );
+    ).add(self.offset);
 
     return Frame{
         .tl = tl,
@@ -61,12 +61,12 @@ pub fn index(self: Atlas, idx: u32) !Frame {
     return self.getFrame(row, col);
 }
 
-test "get frames with no gaps" {
+test "get frames with no gaps or offset" {
     const std = @import("std");
     const testing = std.testing;
     const assert = std.debug.assert;
 
-    const atlas = Atlas.init(128, 128, 16, 16, null);
+    const atlas = Atlas.init(128, 128, 16, 16, null, null);
 
     const firstFrame = try atlas.getFrame(0, 0);
     const thirdFrame = try atlas.getFrame(0, 2);
@@ -92,12 +92,12 @@ test "get frames with no gaps" {
     try testing.expectError(AtlasError.OutOfBounds, atlas.getFrame(8, 8));
 }
 
-test "get frames with gaps" {
+test "get frames with gaps, no offset" {
     const std = @import("std");
     const testing = std.testing;
     const assert = std.debug.assert;
 
-    const atlas = Atlas.init(164, 164, 16, 16, TexPos.init(4, 4));
+    const atlas = Atlas.init(164, 164, 16, 16, TexPos.init(4, 4), null);
 
     const firstFrame = try atlas.getFrame(0, 0);
     const thirdFrame = try atlas.getFrame(0, 2);
@@ -108,7 +108,6 @@ test "get frames with gaps" {
     assert(firstFrame.tl.eq(TexPos.init(4, 4)));
     assert(firstFrame.br.eq(TexPos.init(20, 20)));
 
-    // std.debug.print("{}", .{thirdFrame.tl});
     assert(thirdFrame.tl.eq(TexPos.init(44, 4)));
     assert(thirdFrame.br.eq(TexPos.init(60, 20)));
 
@@ -125,4 +124,34 @@ test "get frames with gaps" {
 }
 
 test "get frames by index" {}
-test "get frame with offset" {}
+
+test "get frame with offset (simulates atlas within larger texture)" {
+    const std = @import("std");
+    const testing = std.testing;
+    const assert = std.debug.assert;
+
+    const atlas = Atlas.init(164, 164, 16, 16, TexPos.init(4, 4), TexPos.init(64, 64));
+
+    const firstFrame = try atlas.getFrame(0, 0);
+    const thirdFrame = try atlas.getFrame(0, 2);
+    const thirdRowFirstFrame = try atlas.getFrame(2, 0);
+    const thirdRowThirdFrame = try atlas.getFrame(2, 2);
+    const lastFrame = try atlas.getFrame(7, 7);
+
+    assert(firstFrame.tl.eq(TexPos.init(68, 68)));
+    assert(firstFrame.br.eq(TexPos.init(84, 84)));
+
+    assert(thirdFrame.tl.eq(TexPos.init(108, 68)));
+    assert(thirdFrame.br.eq(TexPos.init(124, 84)));
+
+    assert(thirdRowFirstFrame.tl.eq(TexPos.init(68, 108)));
+    assert(thirdRowFirstFrame.br.eq(TexPos.init(84, 124)));
+
+    assert(thirdRowThirdFrame.tl.eq(TexPos.init(108, 108)));
+    assert(thirdRowThirdFrame.br.eq(TexPos.init(124, 124)));
+
+    assert(lastFrame.tl.eq(TexPos.init(208, 208)));
+    assert(lastFrame.br.eq(TexPos.init(224, 224)));
+
+    try testing.expectError(AtlasError.OutOfBounds, atlas.getFrame(8, 8));
+}
