@@ -29,8 +29,10 @@ pub fn main() anyerror!void {
     const knight_raw = @embedFile("../assets/sprites/knight.png");
     _ = try Texture.fromMemory(knight_raw);
 
-    const knight_id = try mgr.add(Entity, Entity.init(null, null));
-    try mgr.attach(Sprite, knight_id, Sprite.init(math.Vec3(f32).init(180.0, 90.0, 0.0), math.Vec2(u16).init(0, 0), 16, 16));
+    const knight_spr = Sprite.init(math.Vec3(f32).init(180.0, 90.0, 0.0), math.Vec2(u16).init(0, 0), 16, 16);
+    const knight_id = try mgr.addEntity(.{
+        .pos = math.Vec3(f32).init(180.0, 90.0, 0.0),
+    }, knight_spr, null);
 
     var quad_renderer = try QuadRenderer.init(allocator, width, height, 1000, mgr.genQuads());
 

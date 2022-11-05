@@ -71,27 +71,67 @@ fn decrementCount(self: *Manager, comptime T: type) void {
     }
 }
 
-pub fn add(self: *Manager, comptime T: type, val: T) !usize {
+fn add(self: *Manager, comptime T: type, val: T) !usize {
     var v = val;
-    if (T == Entity) {
-        v.mgr = self;
-    }
-
     var list = self.getList(T);
-    // try to fill empty slots
+    var id = list.items.len;
+
+    // try to find an empty slot first
     for (list.items) |item, idx| {
         if (item == null) {
-            list.items[idx] = v;
-            self.incrementCount(T);
-            return idx;
+            id = idx;
+            break;
         }
     }
 
-    const id = list.items.len;
-    try list.append(v);
+    if (T == Entity) {
+        v.mgr = self;
+        v.id = id;
+    }
+
+    if (id == list.items.len) {
+        try list.append(v);
+    } else {
+        list.items[id] = v;
+    }
 
     self.incrementCount(T);
     return id;
+}
+
+pub fn addSprite(self: *Manager, spr: Sprite) !usize {
+    return self.add(Sprite, spr);
+}
+
+pub fn addBox(self: *Manager, box: Box) !usize {
+    return self.add(Box, box);
+}
+
+pub fn addEntity(self: *Manager, ent_config: Entity.Config, opt_spr: ?Sprite, opt_box: ?Box) !usize {
+    // entity position overrides sprite and box positions when provided at instantiation
+    var spr_id: ?usize = null;
+    if (opt_spr) |spr| {
+        var spr_cp = spr;
+        spr_cp.pos = ent_config.pos.add(ent_config.sprite_offset);
+        spr_id = try self.addSprite(spr_cp);
+    }
+
+    var box_id: ?usize = null;
+    if (opt_box) |box| {
+        var box_cp = box;
+        box_cp.pos = ent_config.pos.add(ent_config.box_offset);
+        box_id = try self.addBox(box_cp);
+    }
+
+    const entity = Entity{
+        .id = 0, // this will be overwritten
+        .sprite_id = spr_id,
+        .box_id = box_id,
+        .config = ent_config,
+        .mgr = null,
+    };
+
+    return try self.add(Entity, entity);
 }
 
 pub fn attach(self: *Manager, comptime T: type, entity_id: usize, val: T) !void {
@@ -123,6 +163,8 @@ pub fn getMut(self: *Manager, comptime T: type, id: usize) !*T {
 
 pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !void {
     var entity = try self.getMut(Entity, id);
+    entity.config.pos = entity.config.pos.add(translation);
+
     if (entity.sprite_id) |sprite_id| {
         var sprite = try self.getMut(Sprite, sprite_id);
         sprite.pos = sprite.pos.add(translation);
@@ -131,6 +173,20 @@ pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !void {
     if (entity.box_id) |box_id| {
         var box = try self.getMut(Box, box_id);
         box.pos = box.pos.add(translation);
+    }
+}
+
+pub fn setPos(self: *Manager, id: usize, pos: math.Vec3(f32)) !void {
+    var entity = try self.getMut(Entity, id);
+    entity.pos = pos;
+    if (entity.sprite_id) |sprite_id| {
+        var sprite = try self.getMut(Sprite, sprite_id);
+        sprite.pos = entity.pos.add(entity.sprite_offset);
+    }
+
+    if (entity.box_id) |box_id| {
+        var box = try self.getMut(Box, box_id);
+        box.pos = entity.pos.add(entity.box_offset);
     }
 }
 

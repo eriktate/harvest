@@ -11,6 +11,7 @@ shader: Shader,
 world_width: u32,
 world_height: u32,
 indices: ArrayList(u32),
+texture: Texture,
 vao: u32,
 vbo: u32,
 ebo: u32,
@@ -55,6 +56,7 @@ pub fn init(alloc: std.mem.Allocator, world_width: u32, world_height: u32, max_q
 }
 
 pub fn draw(self: *QuadRenderer, quads: []const render.Quad) void {
+    self.texture.bind();
     self.genIndices(quads);
     gl.bindVAO(self.vao);
 

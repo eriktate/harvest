@@ -42,3 +42,7 @@ pub fn fromMemory(buffer: []const u8) TexError!Texture {
         .nr_channels = nr_channels,
     };
 }
+
+pub fn bind(self: *Texture) void {
+    gl.bindTexture(gl.TexTarget.Texture2D, self.id);
+}
