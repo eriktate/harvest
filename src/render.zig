@@ -31,7 +31,18 @@ pub const Quad = extern struct {
             .br = Vertex.zero(),
         };
     }
-};
 
-// TODO (etate): add functions here that set up and handle rendering instead of allowing
-// the main function to deal with all of that
+    pub fn print(self: Quad) void {
+        std.debug.print("\n\ntl:\n  pos: {d}, {d}\n", .{ self.tl.pos.x, self.tl.pos.y });
+        std.debug.print("  tex: {d}, {d}", .{ self.tl.tex_pos.x, self.tl.tex_pos.y });
+
+        std.debug.print("\ntr:\n  pos: {d}, {d}\n", .{ self.tr.pos.x, self.tr.pos.y });
+        std.debug.print("  tex: {d}, {d}", .{ self.tr.tex_pos.x, self.tr.tex_pos.y });
+
+        std.debug.print("\nbl:\n  pos: {d}, {d}\n", .{ self.bl.pos.x, self.bl.pos.y });
+        std.debug.print("  tex: {d}, {d}", .{ self.bl.tex_pos.x, self.bl.tex_pos.y });
+
+        std.debug.print("\nbr:\n  pos: {d}, {d}\n", .{ self.br.pos.x, self.br.pos.y });
+        std.debug.print("  tex: {d}, {d}", .{ self.br.tex_pos.x, self.br.tex_pos.y });
+    }
+};

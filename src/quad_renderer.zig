@@ -16,7 +16,7 @@ vao: u32,
 vbo: u32,
 ebo: u32,
 
-pub fn init(alloc: std.mem.Allocator, world_width: u32, world_height: u32, max_quads: usize, quads: []const render.Quad) !QuadRenderer {
+pub fn init(alloc: std.mem.Allocator, world_width: u32, world_height: u32, max_quads: usize, quads: []const render.Quad, tex: Texture) !QuadRenderer {
     var indices = try ArrayList(u32).initCapacity(alloc, max_quads * 6);
     const vert_src = @embedFile("../shaders/sprite.vert");
     const frag_src = @embedFile("../shaders/sprite.frag");
@@ -52,6 +52,7 @@ pub fn init(alloc: std.mem.Allocator, world_width: u32, world_height: u32, max_q
         .indices = indices,
         .world_width = world_width,
         .world_height = world_height,
+        .texture = tex,
     };
 }
 

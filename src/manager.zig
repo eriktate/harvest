@@ -227,6 +227,14 @@ pub fn printSize(self: Manager) void {
     std.debug.print("\nQuads kb: {d}", .{(@sizeOf(Sprite) * self.sprite_count) / 1024});
 }
 
+pub fn tick(self: Manager, delta: f64) void {
+    for (self.sprites.items) |*opt_spr| {
+        if (opt_spr.*) |*spr| {
+            spr.tick(delta);
+        }
+    }
+}
+
 test "add all item types" {
     const assert = std.debug.assert;
 
