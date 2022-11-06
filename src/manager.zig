@@ -168,6 +168,13 @@ pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !void {
     if (entity.sprite_id) |sprite_id| {
         var sprite = try self.getMut(Sprite, sprite_id);
         sprite.pos = sprite.pos.add(translation);
+        if (translation.x < 0) {
+            sprite.flip = true;
+        }
+
+        if (translation.x > 0) {
+            sprite.flip = false;
+        }
     }
 
     if (entity.box_id) |box_id| {
@@ -215,16 +222,16 @@ pub fn genQuads(self: *Manager) []render.Quad {
 pub fn printSize(self: Manager) void {
     std.debug.print("\nEntities (fragmented): {d}", .{self.entities.items.len});
     std.debug.print("\nEntities: {d}", .{self.entity_count});
-    std.debug.print("\nEntities kb (fragmented): {d}", .{(@sizeOf(Entity) * self.entities.items.len) / 1024});
-    std.debug.print("\nEntities kb: {d}", .{(@sizeOf(Entity) * self.entity_count) / 1024});
+    std.debug.print("\nEntity bytes (fragmented): {d}", .{(@sizeOf(Entity) * self.entities.items.len)});
+    std.debug.print("\nEntity bytes: {d}", .{(@sizeOf(Entity) * self.entity_count)});
 
     std.debug.print("\nSprites (fragmented): {d}", .{self.sprites.items.len});
     std.debug.print("\nSprites: {d}", .{self.sprite_count});
-    std.debug.print("\nSprites kb (fragmented): {d}", .{(@sizeOf(Sprite) * self.sprites.items.len) / 1024});
-    std.debug.print("\nSprites kb: {d}", .{(@sizeOf(Sprite) * self.sprite_count) / 1024});
+    std.debug.print("\nSprite bytes (fragmented): {d}", .{(@sizeOf(Sprite) * self.sprites.items.len)});
+    std.debug.print("\nSprites bytes: {d}", .{(@sizeOf(Sprite) * self.sprite_count)});
 
     std.debug.print("\nQuads: {d}", .{self.quads.items.len});
-    std.debug.print("\nQuads kb: {d}", .{(@sizeOf(Sprite) * self.sprite_count) / 1024});
+    std.debug.print("\nQuads bytes: {d}", .{(@sizeOf(Sprite) * self.sprite_count)});
 }
 
 pub fn tick(self: Manager, delta: f64) void {
@@ -232,6 +239,12 @@ pub fn tick(self: Manager, delta: f64) void {
         if (opt_spr.*) |*spr| {
             spr.tick(delta);
         }
+    }
+}
+
+pub fn flipSprite(self: Manager, spr_id: u32, flip: bool) void {
+    if (self.sprites.items[spr_id]) |*spr| {
+        spr.flip = flip;
     }
 }
 

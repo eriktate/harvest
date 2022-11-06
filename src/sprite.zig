@@ -15,7 +15,7 @@ pub const DisplayTag = enum {
 
 pub const Display = union(DisplayTag) {
     static: Atlas.Frame,
-    animation: *Animation,
+    animation: Animation,
 };
 
 const Sprite = @This();
@@ -23,6 +23,7 @@ pos: Pos,
 display: Display,
 width: u16,
 height: u16,
+flip: bool = true,
 
 pub fn init(pos: Pos, display: Display, width: u16, height: u16) Sprite {
     return Sprite{
@@ -43,26 +44,30 @@ pub fn toQuad(self: Sprite) render.Quad {
     const height = @intToFloat(f32, self.height);
 
     const tex_dim = frame.br.sub(frame.tl);
+    const tex_tl = frame.tl;
+    const tex_tr = frame.tl.add(TexPos.init(tex_dim.x, 0));
+    const tex_bl = frame.tl.add(TexPos.init(0, tex_dim.y));
+    const tex_br = frame.br;
 
     const result = render.Quad{
-        .tl = render.Vertex{ .pos = self.pos, .tex_pos = frame.tl },
+        .tl = render.Vertex{ .pos = self.pos, .tex_pos = if (self.flip) tex_tr else tex_tl },
         .tr = render.Vertex{
             .pos = self.pos.add(Pos.init(width, 0, 0)),
-            .tex_pos = frame.tl.add(TexPos.init(tex_dim.x, 0)),
+            .tex_pos = if (self.flip) tex_tl else tex_tr,
         },
         .bl = render.Vertex{
             .pos = self.pos.add(Pos.init(0, height, 0)),
-            .tex_pos = frame.tl.add(TexPos.init(0, tex_dim.y)),
+            .tex_pos = if (self.flip) tex_br else tex_bl,
         },
         .br = render.Vertex{
             .pos = self.pos.add(Pos.init(width, height, 0)),
-            .tex_pos = frame.br,
+            .tex_pos = if (self.flip) tex_bl else tex_br,
         },
     };
     return result;
 }
 
-pub fn animation(anim: *Animation) Display {
+pub fn animation(anim: Animation) Display {
     return Display{ .animation = anim };
 }
 
