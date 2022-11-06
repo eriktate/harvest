@@ -13,6 +13,10 @@ height: u32,
 title: []const u8,
 win: *c.GLFWwindow,
 
+// timings
+now: f64 = 0,
+prev_time: f64 = 0,
+
 pub fn init(width: u16, height: u16, title: [*:0]const u8) WindowError!Window {
     var window = Window{
         .width = width,
@@ -49,4 +53,10 @@ pub fn close(self: Window) void {
 pub fn swap(self: Window) void {
     c.glfwSwapBuffers(self.win);
     c.glfwPollEvents();
+}
+
+pub fn getDelta(self: *Window) f64 {
+    self.prev_time = self.now;
+    self.now = c.glfwGetTime();
+    return self.now - self.prev_time;
 }
