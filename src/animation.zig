@@ -31,6 +31,6 @@ pub fn tick(self: *Animation, delta: f64) void {
     self.current_frame = current_frame;
 }
 
-pub fn getFrame(self: *Animation) Atlas.Frame {
+pub fn getFrame(self: Animation) Atlas.Frame {
     return self.frames[@floatToInt(usize, self.current_frame)];
 }
