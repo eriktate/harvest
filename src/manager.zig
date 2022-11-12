@@ -86,6 +86,9 @@ fn add(self: *Manager, comptime T: type, val: T) !usize {
 
     if (T == Entity) {
         v.mgr = self;
+    }
+
+    if (T == Box or T == Entity) {
         v.id = id;
     }
 
@@ -161,13 +164,33 @@ pub fn getMut(self: *Manager, comptime T: type, id: usize) !*T {
     return ManagerError.DoesNotExist;
 }
 
-pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !void {
+pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !math.Vec3(f32) {
     var entity = try self.getMut(Entity, id);
-    entity.config.pos = entity.config.pos.add(translation);
+    var trans = translation;
+    if (entity.box_id) |box_id| {
+        var box = try self.getMut(Box, box_id);
+        var box_cp: Box = box.*;
+        box_cp.pos = box.pos.add(trans);
+        if (self.checkCollision(box_cp)) {
+            trans = math.Vec3(f32).init(translation.x, 0, 0);
+            box_cp.pos = box.pos.add(trans);
+            if (self.checkCollision(box_cp)) {
+                trans = math.Vec3(f32).init(0, translation.y, 0);
+                box_cp.pos = box.pos.add(trans);
+                if (self.checkCollision(box_cp)) {
+                    return entity.config.pos;
+                }
+            }
+        }
+
+        box.pos = box_cp.pos;
+    }
+
+    entity.config.pos = entity.config.pos.add(trans);
 
     if (entity.sprite_id) |sprite_id| {
         var sprite = try self.getMut(Sprite, sprite_id);
-        sprite.pos = sprite.pos.add(translation);
+        sprite.pos = sprite.pos.add(trans);
         if (translation.x < 0) {
             sprite.flip = true;
         }
@@ -177,10 +200,7 @@ pub fn move(self: *Manager, id: usize, translation: math.Vec3(f32)) !void {
         }
     }
 
-    if (entity.box_id) |box_id| {
-        var box = try self.getMut(Box, box_id);
-        box.pos = box.pos.add(translation);
-    }
+    return entity.config.pos;
 }
 
 pub fn setPos(self: *Manager, id: usize, pos: math.Vec3(f32)) !void {
@@ -232,6 +252,11 @@ pub fn printSize(self: Manager) void {
 
     std.debug.print("\nQuads: {d}", .{self.quads.items.len});
     std.debug.print("\nQuads bytes: {d}", .{(@sizeOf(Sprite) * self.sprite_count)});
+
+    std.debug.print("\nBoxes (fragmented): {d}", .{self.boxes.items.len});
+    std.debug.print("\nBoxes: {d}", .{self.box_count});
+    std.debug.print("\nBox bytes (fragmented): {d}", .{(@sizeOf(Box) * self.boxes.items.len)});
+    std.debug.print("\nBox bytes: {d}", .{(@sizeOf(Sprite) * self.box_count)});
 }
 
 pub fn tick(self: Manager, delta: f64) void {
@@ -246,6 +271,20 @@ pub fn flipSprite(self: Manager, spr_id: u32, flip: bool) void {
     if (self.sprites.items[spr_id]) |*spr| {
         spr.flip = flip;
     }
+}
+
+pub fn checkCollision(self: Manager, check: Box) bool {
+    for (self.boxes.items) |opt_box| {
+        if (opt_box) |box| {
+            if (box.solid) {
+                if (check.overlaps(box)) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 test "add all item types" {

@@ -115,3 +115,41 @@ pub fn Vec4(comptime T: type) type {
         pub usingnamespace VecBase(T, 4, Self);
     };
 }
+
+pub fn Mat4(comptime T: type) type {
+    return extern struct {
+        data: [16]T,
+
+        const Self = @This();
+
+        pub fn identity() Self {
+            return Self{
+                .data = [16]T{
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1,
+                },
+            };
+        }
+
+        pub fn orthographic(t: T, l: T, b: T, r: T) Self {
+            return Self{
+                .data = [16]T{
+                    2 / (r - l),          0,                    0, 0,
+                    0,                    2 / (t - b),          0, 0,
+                    0,                    0,                    1, 0,
+                    -((r + l) / (r - l)), -((t + b) / (t - b)), 0, 1,
+                },
+            };
+        }
+
+        pub fn transform(self: Self, in: Vec3(T)) Vec3(T) {
+            return Vec3(T){
+                .x = Vec3(T).init(self.data[0], self.data[4], self.data[2]).dot(in),
+                .y = Vec3(T).init(self.data[4], self.data[5], self.data[6]).dot(in),
+                .z = Vec3(T).init(self.data[8], self.data[9], self.data[10]).dot(in),
+            };
+        }
+    };
+}
