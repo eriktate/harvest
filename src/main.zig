@@ -77,7 +77,7 @@ pub fn main() anyerror!void {
         const knight_pos = try mgr.move(knight_id, controller.moveVec().scale(0.5));
 
         // track player with camera
-        camera.trackTarget(knight_pos);
+        camera.trackTarget(knight_pos.add(math.Vec3(f32).from_vec2(controller.right_stick).scale(64)));
         quad_renderer.shader.setMat4("projection", camera.projection());
 
         gl.clearColor(165.0 / 255.0, 140.0 / 255.0, 39.0 / 255.0, 1.0);

@@ -91,6 +91,14 @@ pub fn Vec3(comptime T: type) type {
             };
         }
 
+        pub fn from_vec2(v: Vec2(T)) Self {
+            return .{
+                .x = v.x,
+                .y = v.y,
+                .z = 0,
+            };
+        }
+
         pub usingnamespace VecBase(T, 3, Self);
     };
 }
