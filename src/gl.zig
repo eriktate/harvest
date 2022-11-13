@@ -5,6 +5,7 @@
 
 const std = @import("std");
 const c = @import("c.zig");
+const math = @import("math.zig");
 
 pub const GlError = error{
     ShaderCompilation,
@@ -175,6 +176,10 @@ pub fn uniformInt(program: Handle, name: [*]const u8, val: i32) void {
 
 pub fn uniformUint(program: Handle, name: [*]const u8, val: u32) void {
     c.glUniform1ui(c.glGetUniformLocation(program, name), val);
+}
+
+pub fn uniformMat4(program: Handle, name: [*]const u8, val: math.Mat4(f32)) void {
+    c.glUniformMatrix4fv(c.glGetUniformLocation(program, name), 1, c.GL_FALSE, &val.data);
 }
 
 pub fn drawElements(mode: DrawMode, count: usize) void {

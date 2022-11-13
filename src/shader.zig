@@ -1,5 +1,6 @@
 const std = @import("std");
 const gl = @import("gl.zig");
+const math = @import("math.zig");
 
 const ShaderError = error{
     VertexCompilation,
@@ -52,4 +53,9 @@ pub fn setInt(self: Shader, name: [*]const u8, val: i32) void {
 pub fn setUint(self: Shader, name: [*]const u8, val: u32) void {
     self.use();
     gl.uniformUint(self.id, name, val);
+}
+
+pub fn setMat4(self: Shader, name: [*]const u8, val: math.Mat4(f32)) void {
+    self.use();
+    gl.uniformMat4(self.id, name, val);
 }

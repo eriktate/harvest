@@ -14,6 +14,7 @@ pub const Config = struct {
     box_offset: math.Vec3(f32) = Pos.zero(),
 };
 
+// TODO (etate): look into usingnamespace with Config
 const Entity = @This();
 id: usize,
 sprite_id: ?usize,

@@ -23,9 +23,11 @@
             "id": "3f178999a8cb75dc",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
+              "type": "markdown",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md"
+                "file": "MVP.md",
+                "mode": "source",
+                "source": false
               }
             }
           },
@@ -106,7 +108,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "file": "MVP.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -123,7 +125,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md",
+                "file": "MVP.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -146,7 +148,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Excalidraw/engine_braindump.excalidraw.md"
+                "file": "MVP.md"
               }
             }
           }
@@ -159,10 +161,10 @@
   },
   "active": "3f178999a8cb75dc",
   "lastOpenFiles": [
+    "Excalidraw/engine_braindump.excalidraw.md",
     "MVP.md",
     "Brainstorm.md",
     "Excalidraw/braindump.excalidraw.md",
-    "Excalidraw/engine_braindump.excalidraw.md",
     "Untitled 1.md",
     "Excalidraw.md"
   ]

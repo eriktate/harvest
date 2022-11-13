@@ -2,10 +2,10 @@
 - [x] Rendering quads to the screen
 - [x] Basic entity management
 - [ ] Debug renderer
-- [ ] Player controller/movement
+- [x] Player controller/movement
 - [ ] Walls
-- [ ] Player collision
-- [ ] Camera
+- [x] Player collision
+- [x] Camera
 - [x] Loading texture atlases
 - [x] Animations
 - [ ] Static tile renderer (_slightly_ different from sprite renderer, and should happen first)

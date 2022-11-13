@@ -36,6 +36,8 @@ pub fn init(width: u16, height: u16, title: [*:0]const u8) WindowError!Window {
 
     c.glfwMakeContextCurrent(window.win);
     gl.viewport(0, 0, width, height);
+    // c.glEnable(c.GL_DEPTH_TEST);
+    // c.glDepthFunc(c.GL_GREATER);
 
     return window;
 }

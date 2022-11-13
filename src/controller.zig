@@ -85,19 +85,21 @@ fn findGamepad() ?i32 {
     return null;
 }
 
+// returns the unit vector representing the left stick with
+// deadzone applied
 pub fn moveVec(self: Controller) math.Vec3(f32) {
     var vec = math.Vec3(f32).init(self.left_stick.x, self.left_stick.y, 0);
 
-    if (vec.mag() < 0.2) {
-        return math.Vec3(f32).zero();
-    }
-
-    if (@fabs(vec.x) < 0.2) { // hard coded deadzone
+    if (@fabs(vec.x) < 0.3) {
         vec.x = 0;
     }
 
-    if (@fabs(vec.y) < 0.2) {
+    if (@fabs(vec.y) < 0.3) {
         vec.y = 0;
+    }
+
+    if (vec.x == 0 and vec.y == 0) {
+        return vec;
     }
 
     return vec.unit();
