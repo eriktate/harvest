@@ -186,6 +186,10 @@ pub fn drawElements(mode: DrawMode, count: usize) void {
     c.glDrawElements(@enumToInt(mode), @intCast(c_int, count), c.GL_UNSIGNED_INT, null);
 }
 
+pub fn drawArrays(mode: DrawMode, count: usize) void {
+    c.glDrawArrays(@enumToInt(mode), 0, @intCast(c_int, count));
+}
+
 pub fn genTexture() Handle {
     var tex_id: Handle = 0;
     c.glGenTextures(1, &tex_id);

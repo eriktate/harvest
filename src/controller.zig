@@ -36,6 +36,7 @@ button_a: bool = false,
 button_b: bool = false,
 button_x: bool = false,
 button_y: bool = false,
+button_select: bool = false,
 
 pub fn init() !Controller {
     const id = findGamepad();
@@ -67,6 +68,7 @@ pub fn tick(self: *Controller) void {
     self.button_b = state.buttons[c.GLFW_GAMEPAD_BUTTON_B] == c.GLFW_PRESS;
     self.button_x = state.buttons[c.GLFW_GAMEPAD_BUTTON_X] == c.GLFW_PRESS;
     self.button_y = state.buttons[c.GLFW_GAMEPAD_BUTTON_Y] == c.GLFW_PRESS;
+    self.button_select = state.buttons[c.GLFW_GAMEPAD_BUTTON_BACK] == c.GLFW_PRESS;
 }
 
 fn findGamepad() ?i32 {

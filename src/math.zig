@@ -161,3 +161,7 @@ pub fn Mat4(comptime T: type) type {
         }
     };
 }
+
+// Vec3(f32) and Vec2(u16) are used a lot, so lets just alias them
+pub const Pos = Vec3(f32);
+pub const TexPos = Vec2(u16);

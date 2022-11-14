@@ -3,8 +3,10 @@ const math = @import("math.zig");
 const render = @import("render.zig");
 const Entity = @import("entity.zig");
 const Sprite = @import("sprite.zig");
+const SpriteManager = @import("sprite_manager.zig");
 const Box = @import("box.zig");
 const ArrayList = std.ArrayList;
+const Debug = @import("debug_renderer.zig");
 const Quad = render.Quad;
 
 const ManagerError = error{
@@ -13,27 +15,25 @@ const ManagerError = error{
 
 const Manager = @This();
 entities: ArrayList(?Entity),
-sprites: ArrayList(?Sprite),
+sprite_manager: SpriteManager,
 boxes: ArrayList(?Box),
 quads: ArrayList(Quad),
 
 // because of fragmentation, the length of the ArrayLists aren't necessarily the count of
 // each type so we track the actual count separately
 entity_count: usize,
-sprite_count: usize,
 box_count: usize,
 quad_count: usize,
 
-pub fn init(alloc: std.mem.Allocator, num: usize) !Manager {
-    var entities = try ArrayList(?Entity).initCapacity(alloc, num);
-    var boxes = try ArrayList(?Box).initCapacity(alloc, num);
-    var sprites = try ArrayList(?Sprite).initCapacity(alloc, num);
-    var quads = try ArrayList(Quad).initCapacity(alloc, num);
+pub fn init(alloc: std.mem.Allocator, cap: usize) !Manager {
+    var entities = try ArrayList(?Entity).initCapacity(alloc, cap);
+    var boxes = try ArrayList(?Box).initCapacity(alloc, cap);
+    var quads = try ArrayList(Quad).initCapacity(alloc, cap);
 
     return Manager{
         .entities = entities,
         .boxes = boxes,
-        .sprites = sprites,
+        .sprite_manager = try SpriteManager.init(alloc, cap),
         .quads = quads,
 
         .entity_count = 0,
@@ -46,7 +46,7 @@ pub fn init(alloc: std.mem.Allocator, num: usize) !Manager {
 fn getList(self: *Manager, comptime T: type) *ArrayList(?T) {
     return switch (T) {
         Entity => &self.entities,
-        Sprite => &self.sprites,
+        Sprite => &self.sprite_manager.sprites,
         Box => &self.boxes,
         Quad => &self.quads,
         else => @compileError(@typeName(T) ++ " is a non-managed type"),
@@ -102,10 +102,6 @@ fn add(self: *Manager, comptime T: type, val: T) !usize {
     return id;
 }
 
-pub fn addSprite(self: *Manager, spr: Sprite) !usize {
-    return self.add(Sprite, spr);
-}
-
 pub fn addBox(self: *Manager, box: Box) !usize {
     return self.add(Box, box);
 }
@@ -154,10 +150,20 @@ pub fn destroy(self: *Manager, comptime T: type, id: usize) void {
 }
 
 pub fn get(self: *Manager, comptime T: type, id: usize) !T {
+    var idx = id;
+    if (T == Sprite) {
+        idx = self.sprite_index.items[id];
+    }
+
     return self.getList(T).items[id] orelse ManagerError.DoesNotExist;
 }
 
 pub fn getMut(self: *Manager, comptime T: type, id: usize) !*T {
+    var idx = id;
+    if (T == Sprite) {
+        idx = self.sprite_index.items[id];
+    }
+
     if (self.getList(T).items[id]) |*item| {
         return item;
     }
@@ -219,7 +225,7 @@ pub fn setPos(self: *Manager, id: usize, pos: math.Vec3(f32)) !void {
 
 pub fn deinit(self: Manager) void {
     self.entities.deinit();
-    self.sprites.deinit();
+    self.sprite_manager.deinit();
     self.boxes.deinit();
     self.quads.deinit();
 }
@@ -285,6 +291,27 @@ pub fn checkCollision(self: Manager, check: Box) bool {
     }
 
     return false;
+}
+
+pub fn drawDebug(self: Manager, debug: *Debug) !void {
+    for (self.boxes.items) |opt_box| {
+        if (opt_box) |box| {
+            try box.drawDebug(debug);
+        }
+    }
+}
+
+fn swapSprites(self: *Manager, src: u32, dest: u32) void {
+    const src_spr = self.sprites.items[src].?;
+    const dest_spr = self.sprites.items[dest].?;
+
+    // swap sprites
+    self.sprites.items[dest] = src_spr;
+    self.sprites.items[src] = dest_spr;
+
+    // remap index
+    self.sprite_index.items[dest.id] = src;
+    self.sprite_index.items[src.id] = dest;
 }
 
 test "add all item types" {

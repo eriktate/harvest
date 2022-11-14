@@ -19,6 +19,7 @@ pub const Display = union(DisplayTag) {
 };
 
 const Sprite = @This();
+id: u32 = 0, // different from entity ID
 pos: Pos,
 display: Display,
 width: u16,
@@ -64,6 +65,11 @@ pub fn toQuad(self: Sprite) render.Quad {
             .tex_pos = if (self.flip) tex_bl else tex_br,
         },
     };
+
+    if (self.id == 3) {
+        // std.debug.print("\ntex dimensions: {}\n", .{tex_dim});
+        // result.print();
+    }
     return result;
 }
 

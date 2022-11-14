@@ -1,4 +1,5 @@
 const math = @import("math.zig");
+const Debug = @import("debug_renderer.zig");
 const Pos = math.Vec3(f32);
 
 const Box = @This();
@@ -16,13 +17,45 @@ pub fn init(pos: Pos, w: f32, h: f32, solid: bool) Box {
     };
 }
 
-pub fn overlaps(self: Box, other: Box) bool {
+// pub fn overlaps(self: Box, other: Box) bool {
+//     if (self.id == other.id) {
+//         return false;
+//     }
+
+//     const check = self.pos.add(self.size).sub(other.pos.add(other.size));
+//     return (@fabs(check.x) <= self.size.x and @fabs(check.y) <= self.size.y) or (@fabs(check.x) <= other.size.x and @fabs(check.y) <= other.size.y);
+// }
+
+fn _overlaps(self: Box, other: Box) bool {
     if (self.id == other.id) {
         return false;
     }
 
-    const check = self.pos.add(self.size).sub(other.pos.add(other.size));
-    return (@fabs(check.x) <= self.size.x and @fabs(check.y) <= self.size.y) or (@fabs(check.x) <= other.size.x and @fabs(check.y) <= other.size.y);
+    const left = self.pos.x;
+    const right = self.pos.x + self.size.x;
+    const top = self.pos.y;
+    const bot = self.pos.y + self.size.y;
+
+    const other_left = other.pos.x;
+    const other_right = other.pos.x + other.size.x;
+    const other_top = other.pos.y;
+    const other_bot = other.pos.y + other.size.y;
+
+    const overlap_x = (left > other_left and left < other_right) or (right > other_left and right < other_right);
+    const overlap_y = (top > other_top and top < other_bot) or (bot > other_top and bot < other_bot);
+
+    return overlap_x and overlap_y;
+}
+
+pub fn overlaps(self: Box, other: Box) bool {
+    return _overlaps(self, other) or _overlaps(other, self);
+}
+
+pub fn drawDebug(self: Box, debug: *Debug) !void {
+    try debug.drawLine(self.pos, self.pos.add(Pos.init(self.size.x, 0, 0)));
+    try debug.drawLine(self.pos.add(Pos.init(self.size.x, 0, 0)), self.pos.add(self.size));
+    try debug.drawLine(self.pos.add(self.size), self.pos.add(Pos.init(0, self.size.y, 0)));
+    try debug.drawLine(self.pos.add(Pos.init(0, self.size.y, 0)), self.pos);
 }
 
 test "overlapping boxes" {
